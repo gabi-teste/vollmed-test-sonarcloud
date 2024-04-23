@@ -10,6 +10,5 @@ COPY src src
 RUN ./mvnw package -DskipTests
 
 ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} application.jar
 
-CMD ["java", "-jar", "application.jar"]
+CMD ["java", "-jar", ${JAR_FILE}]
