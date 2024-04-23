@@ -37,8 +37,12 @@ jobs:
     - name: Realiza a build
       run: mvn package --file pom.xml -DskipTests
 
+    - name: Gera JaCoCo coverage report
+      run: mvn jacoco:prepare-agent verify
+
     - name: Análise do SonarCloud
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=gabi-teste_vollmed-test-sonarcloud -Dsonar.sources=src/main
+      run: mvn sonar:sonar -Dsonar.projectKey=gabi-teste_vollmed
+      
