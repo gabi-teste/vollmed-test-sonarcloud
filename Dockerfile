@@ -9,6 +9,4 @@ COPY src src
 
 RUN ./mvnw package -DskipTests
 
-ARG JAR_FILE=target/*.jar
-
-CMD java -jar ${JAR_FILE}
+CMD java -jar target/*.jar
