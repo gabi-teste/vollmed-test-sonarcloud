@@ -23,4 +23,5 @@ done
 
 echo "Todos os containers em execução foram parados."
 
+docker compose build
 docker compose up -d
