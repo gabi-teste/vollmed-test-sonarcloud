@@ -54,9 +54,6 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > deploy_key.pem
         chmod 600 deploy_key.pem
-
-        # Adiciona o endereço IP da instância EC2 à lista de chaves conhecidas do GitHub Actions
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
         
-        scp -i deploy_key.pem init.sql $USER@$HOST:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i deploy_key.pem init.sql $USER@$HOST:/home/ubuntu/
       
