@@ -45,4 +45,15 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn sonar:sonar -Dsonar.projectKey=gabi-teste_vollmed
+
+    - name: Deploy para EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }} # Chave privada SSH para se conectar à instância EC2
+        USER: ubuntu # Usuário SSH na instância EC2
+        HOST: 3.14.85.170 # Endereço IP da instância EC2
+      run: |
+        echo "$PRIVATE_KEY" > deploy_key.pem
+        chmod 600 deploy_key.pem
+        
+        scp -i deploy_key.pem init.sql $USER@$HOST:/home/ubuntu/
       
