@@ -6,7 +6,7 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
-COPY script-deploy.sh .
+
 
 RUN ./mvnw package -DskipTests
 
