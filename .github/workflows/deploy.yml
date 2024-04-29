@@ -26,7 +26,7 @@ jobs:
       env:
         PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }} # Chave privada SSH para se conectar à instância EC2
         USER: ubuntu # Usuário SSH na instância EC2
-        HOST: 3.14.85.170 # Endereço IP da instância EC2
+        HOST: 18.222.141.101 # Endereço IP da instância EC2
       run: |
         echo "$PRIVATE_KEY" > deploy_key.pem
         chmod 600 deploy_key.pem
