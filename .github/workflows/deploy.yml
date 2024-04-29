@@ -1,0 +1,42 @@
+name: Deploy Vollmed
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configura o Docker Compose
+      run: |
+        sudo rm /usr/local/bin/docker-compose
+        curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/
+    
+    - name: Roda o Docker Compose (faz a build)
+      run: docker-compose up -d && docker images
+
+    - name: Deploy para EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }} # Chave privada SSH para se conectar à instância EC2
+        USER: ubuntu # Usuário SSH na instância EC2
+        HOST: 3.14.85.170 # Endereço IP da instância EC2
+      run: |
+        echo "$PRIVATE_KEY" > deploy_key.pem
+        chmod 600 deploy_key.pem
+
+        # Compacta a imagem Docker 
+        docker save -o vollmed-test-sonarcloud_api.tar vollmed-test-sonarcloud_api
+
+        scp -o StrictHostKeyChecking=no -i deploy_key.pem vollmed-test-sonarcloud_api.tar $USER@$HOST:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i deploy_key.pem init.sql $USER@$HOST:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i deploy_key.pem docker-compose-prod.yaml $USER@$HOST:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i deploy_key.pem script_deploy.sh $USER@$HOST:/home/ubuntu/
+
+        ssh -i deploy_key.pem $USER@$HOST "chmod +x script_deploy.sh && ./script_deploy.sh"
+        
